@@ -1,4 +1,5 @@
 import { Instagram, Phone, MapPin, Heart, Video, Truck } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -9,13 +10,20 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <div className="mb-6">
-              <span className="font-display text-2xl font-bold text-primary-foreground">
-                Shree Vitthalesh
-              </span>
-              <span className="font-display text-sm text-accent block tracking-widest uppercase">
-                Sarees
-              </span>
+            <div className="mb-6 flex items-center gap-3">
+              <img 
+                src={logo} 
+                alt="Shree Vitthalesh Sarees Logo" 
+                className="h-14 w-auto"
+              />
+              <div className="flex flex-col">
+                <span className="font-display text-xl font-bold text-primary-foreground leading-tight">
+                  Shree Vitthalesh
+                </span>
+                <span className="font-display text-xs text-accent tracking-widest uppercase">
+                  Sarees
+                </span>
+              </div>
             </div>
             <p className="font-body text-primary-foreground/70 text-sm leading-relaxed mb-4">
               Celebrating the timeless elegance of Indian sarees since 2003. Your destination for authentic handwoven masterpieces.

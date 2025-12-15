@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Instagram, Phone, MapPin } from "lucide-react";
+import { Menu, X, Instagram, Phone } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,13 +33,20 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a href="#home" className="flex flex-col items-start">
-            <span className="font-display text-2xl md:text-3xl font-bold text-primary">
-              Shree Vitthalesh
-            </span>
-            <span className="font-display text-sm text-accent tracking-widest uppercase">
-              Sarees
-            </span>
+          <a href="#home" className="flex items-center gap-3">
+            <img 
+              src={logo} 
+              alt="Shree Vitthalesh Sarees Logo" 
+              className="h-12 md:h-14 w-auto"
+            />
+            <div className="hidden sm:flex flex-col items-start">
+              <span className="font-display text-xl md:text-2xl font-bold text-primary leading-tight">
+                Shree Vitthalesh
+              </span>
+              <span className="font-display text-xs text-accent tracking-widest uppercase">
+                Sarees
+              </span>
+            </div>
           </a>
 
           {/* Desktop Navigation */}
