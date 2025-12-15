@@ -1,4 +1,4 @@
-import { Instagram, Phone, MapPin, Heart } from "lucide-react";
+import { Instagram, Phone, MapPin, Heart, Video, Truck } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -6,9 +6,9 @@ const Footer = () => {
   return (
     <footer className="bg-foreground py-16">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
+        <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
-          <div>
+          <div className="md:col-span-1">
             <div className="mb-6">
               <span className="font-display text-2xl font-bold text-primary-foreground">
                 Shree Vitthalesh
@@ -17,9 +17,12 @@ const Footer = () => {
                 Sarees
               </span>
             </div>
-            <p className="font-body text-primary-foreground/70 text-sm leading-relaxed">
-              Celebrating the timeless elegance of Indian sarees. Your destination for authentic handwoven masterpieces.
+            <p className="font-body text-primary-foreground/70 text-sm leading-relaxed mb-4">
+              Celebrating the timeless elegance of Indian sarees since 2003. Your destination for authentic handwoven masterpieces.
             </p>
+            <div className="flex items-center gap-2 text-accent text-sm font-body">
+              <span className="font-semibold">✨ Trusted Since 2003</span>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -40,6 +43,26 @@ const Footer = () => {
             </nav>
           </div>
 
+          {/* Services */}
+          <div>
+            <h4 className="font-display text-lg font-semibold text-primary-foreground mb-6">
+              Our Services
+            </h4>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-primary-foreground/70">
+                <Video className="w-4 h-4 text-accent" />
+                <span className="font-body text-sm">Video Call Shopping</span>
+              </div>
+              <div className="flex items-center gap-2 text-primary-foreground/70">
+                <Truck className="w-4 h-4 text-accent" />
+                <span className="font-body text-sm">Shipping Across India</span>
+              </div>
+              <p className="font-body text-sm text-primary-foreground/50">
+                * No COD Available
+              </p>
+            </div>
+          </div>
+
           {/* Contact */}
           <div>
             <h4 className="font-display text-lg font-semibold text-primary-foreground mb-6">
@@ -55,13 +78,20 @@ const Footer = () => {
                 <Instagram className="w-5 h-5" />
                 <span className="font-body text-sm">@shree.vitthalesh.sarees</span>
               </a>
-              <div className="flex items-center gap-3 text-primary-foreground/70">
+              <a
+                href="tel:+918349985566"
+                className="flex items-center gap-3 text-primary-foreground/70 hover:text-accent transition-colors"
+              >
                 <Phone className="w-5 h-5" />
-                <span className="font-body text-sm">+91 XXXXX XXXXX</span>
-              </div>
-              <div className="flex items-center gap-3 text-primary-foreground/70">
-                <MapPin className="w-5 h-5" />
-                <span className="font-body text-sm">Maharashtra, India</span>
+                <span className="font-body text-sm">+91 8349985566</span>
+              </a>
+              <div className="flex items-start gap-3 text-primary-foreground/70">
+                <MapPin className="w-5 h-5 flex-shrink-0" />
+                <span className="font-body text-sm">
+                  118, Tambaku Bazar<br />
+                  Near Ghantaghar Sq.<br />
+                  Jaora, Madhya Pradesh
+                </span>
               </div>
             </div>
           </div>
