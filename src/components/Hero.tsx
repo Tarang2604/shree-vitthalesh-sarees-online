@@ -30,7 +30,7 @@ const Hero = () => {
           <div className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 rounded-full px-4 py-2 mb-8 animate-fade-in">
             <Sparkles className="w-4 h-4 text-accent" />
             <span className="text-sm font-body text-primary-foreground/90">
-              Celebrating Indian Tradition
+              ✨ Trusted Since 2003
             </span>
           </div>
 
@@ -64,7 +64,7 @@ const Hero = () => {
               <p className="font-body text-sm text-primary-foreground/70">Saree Designs</p>
             </div>
             <div>
-              <p className="font-display text-3xl md:text-4xl font-bold text-accent">15+</p>
+              <p className="font-display text-3xl md:text-4xl font-bold text-accent">22+</p>
               <p className="font-body text-sm text-primary-foreground/70">Years of Trust</p>
             </div>
             <div>

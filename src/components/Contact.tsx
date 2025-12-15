@@ -1,22 +1,28 @@
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Clock, Instagram, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Clock, Instagram, MessageCircle, Video, Truck, Ban } from "lucide-react";
 
 const contactInfo = [
   {
     icon: MapPin,
     title: "Visit Our Showroom",
-    details: ["Shree Vitthalesh Sarees", "Main Market, City Center", "Maharashtra, India"],
+    details: ["118, Tambaku Bazar", "Near Ghantaghar Sq.", "Jaora, Madhya Pradesh"],
   },
   {
     icon: Phone,
     title: "Call Us",
-    details: ["+91 XXXXX XXXXX", "+91 XXXXX XXXXX"],
+    details: ["+91 8349985566", "Video Call Available"],
   },
   {
     icon: Clock,
     title: "Working Hours",
     details: ["Mon - Sat: 10:00 AM - 8:00 PM", "Sunday: 11:00 AM - 6:00 PM"],
   },
+];
+
+const highlights = [
+  { icon: Video, label: "Video Call Shopping" },
+  { icon: Truck, label: "Shipping Across India" },
+  { icon: Ban, label: "No COD Available" },
 ];
 
 const Contact = () => {
@@ -34,7 +40,7 @@ const Contact = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="font-body text-sm font-medium text-accent tracking-widest uppercase mb-4 block">
             Get in Touch
           </span>
@@ -44,6 +50,19 @@ const Contact = () => {
           <p className="font-body text-primary-foreground/80">
             Experience the elegance of our saree collection in person. Our expert team is ready to help you find your perfect saree.
           </p>
+        </div>
+
+        {/* Service Highlights */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {highlights.map((item, index) => (
+            <div
+              key={item.label}
+              className="inline-flex items-center gap-2 bg-accent/20 backdrop-blur-sm border border-accent/30 rounded-full px-5 py-2"
+            >
+              <item.icon className="w-4 h-4 text-accent" />
+              <span className="font-body text-sm text-primary-foreground/90">{item.label}</span>
+            </div>
+          ))}
         </div>
 
         {/* Contact Cards */}
@@ -73,10 +92,12 @@ const Contact = () => {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button variant="gold" size="lg">
-            <Phone className="w-5 h-5" />
-            Call Now
-          </Button>
+          <a href="tel:+918349985566">
+            <Button variant="gold" size="lg" className="w-full sm:w-auto">
+              <Phone className="w-5 h-5" />
+              Call Now
+            </Button>
+          </a>
           <a
             href="https://www.instagram.com/shree.vitthalesh.sarees/"
             target="_blank"
@@ -87,10 +108,12 @@ const Contact = () => {
               Follow on Instagram
             </Button>
           </a>
-          <Button variant="heroOutline" size="lg">
-            <MessageCircle className="w-5 h-5" />
-            WhatsApp
-          </Button>
+          <a href="https://wa.me/918349985566" target="_blank" rel="noopener noreferrer">
+            <Button variant="heroOutline" size="lg" className="w-full sm:w-auto">
+              <MessageCircle className="w-5 h-5" />
+              WhatsApp
+            </Button>
+          </a>
         </div>
 
         {/* Instagram Preview */}

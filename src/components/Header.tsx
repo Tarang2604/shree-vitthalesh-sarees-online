@@ -64,10 +64,12 @@ const Header = () => {
             >
               <Instagram className="w-5 h-5" />
             </a>
-            <Button variant="gold" size="sm">
-              <Phone className="w-4 h-4" />
-              Call Now
-            </Button>
+            <a href="tel:+918349985566">
+              <Button variant="gold" size="sm">
+                <Phone className="w-4 h-4" />
+                Call Now
+              </Button>
+            </a>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -102,10 +104,12 @@ const Header = () => {
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
-                <Button variant="gold" size="sm" className="flex-1">
-                  <Phone className="w-4 h-4" />
-                  Call Now
-                </Button>
+                <a href="tel:+918349985566" className="flex-1">
+                  <Button variant="gold" size="sm" className="w-full">
+                    <Phone className="w-4 h-4" />
+                    Call Now
+                  </Button>
+                </a>
               </div>
             </div>
           </nav>
