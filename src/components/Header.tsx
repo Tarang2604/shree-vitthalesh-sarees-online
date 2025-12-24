@@ -1,11 +1,25 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Instagram, Phone } from "lucide-react";
+import { Menu, X, Instagram, Phone, ShoppingCart, User, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import logo from "@/assets/logo.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const { totalItems } = useCart();
+  const location = useLocation();
+
+  const isHomePage = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,17 +29,19 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { label: "Home", href: "#home" },
-    { label: "Collections", href: "#collections" },
-    { label: "About", href: "#about" },
-    { label: "Contact", href: "#contact" },
-  ];
+  const navLinks = isHomePage
+    ? [
+        { label: "Home", href: "#home" },
+        { label: "Collections", href: "#collections" },
+        { label: "About", href: "#about" },
+        { label: "Contact", href: "#contact" },
+      ]
+    : [];
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
+        isScrolled || !isHomePage
           ? "bg-background/95 backdrop-blur-md shadow-elegant py-3"
           : "bg-transparent py-5"
       }`}
@@ -33,7 +49,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <img 
               src={logo} 
               alt="Shree Vitthalesh Sarees Logo" 
@@ -47,7 +63,7 @@ const Header = () => {
                 Sarees
               </span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
@@ -60,6 +76,12 @@ const Header = () => {
                 {link.label}
               </a>
             ))}
+            <Link
+              to="/shop"
+              className="font-body text-sm font-medium text-foreground/80 hover:text-primary transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent hover:after:w-full after:transition-all"
+            >
+              Shop
+            </Link>
           </nav>
 
           {/* Desktop CTA */}
@@ -72,6 +94,45 @@ const Header = () => {
             >
               <Instagram className="w-5 h-5" />
             </a>
+            
+            {/* Cart */}
+            <Link to="/cart" className="relative text-foreground/70 hover:text-primary transition-colors">
+              <ShoppingCart className="w-5 h-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+
+            {/* User Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/orders" className="cursor-pointer">
+                      My Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm">
+                  Sign In
+                </Button>
+              </Link>
+            )}
+
             <a href="tel:+918349985566">
               <Button variant="gold" size="sm">
                 <Phone className="w-4 h-4" />
@@ -81,12 +142,22 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden text-foreground p-2"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex md:hidden items-center gap-3">
+            <Link to="/cart" className="relative text-foreground/70 hover:text-primary transition-colors p-2">
+              <ShoppingCart className="w-5 h-5" />
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+            <button
+              className="text-foreground p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -103,6 +174,41 @@ const Header = () => {
                   {link.label}
                 </a>
               ))}
+              <Link
+                to="/shop"
+                className="font-body text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Shop
+              </Link>
+              {user ? (
+                <>
+                  <Link
+                    to="/orders"
+                    className="font-body text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Orders
+                  </Link>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="font-body text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2 text-left"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/auth"
+                  className="font-body text-base font-medium text-foreground/80 hover:text-primary transition-colors py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+              )}
               <div className="flex items-center gap-4 pt-4 border-t border-border">
                 <a
                   href="https://www.instagram.com/shree.vitthalesh.sarees/"
