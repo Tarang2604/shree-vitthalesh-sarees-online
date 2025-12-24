@@ -1,5 +1,12 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, Phone, Clock, Instagram, MessageCircle, Video, Truck, Ban } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { MapPin, Phone, Clock, Instagram, MessageCircle, Video, Truck, Ban, Send } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 
 const contactInfo = [
   {
@@ -25,7 +32,75 @@ const highlights = [
   { icon: Ban, label: "No COD Available" },
 ];
 
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  phone: z.string().trim().min(10, "Valid phone number required").max(15),
+  email: z.string().trim().email("Valid email required").optional().or(z.literal("")),
+  message: z.string().trim().min(10, "Message must be at least 10 characters").max(1000),
+});
+
 const Contact = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const result = contactSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0] as string] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email || null,
+        message: formData.message,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message Sent!",
+        description: "We will get back to you soon.",
+      });
+      setFormData({ name: "", phone: "", email: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Failed to send",
+        description: "Please try calling us directly at +91 8349985566",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section id="contact" className="py-24 bg-gradient-maroon relative overflow-hidden">
       {/* Decorative Pattern */}
@@ -88,6 +163,81 @@ const Contact = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Contact Form */}
+        <div className="max-w-xl mx-auto mb-12">
+          <div className="bg-card/10 backdrop-blur-sm border border-primary-foreground/20 rounded-xl p-6">
+            <h3 className="font-display text-xl font-semibold text-primary-foreground mb-6 text-center">
+              Send us a Message
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-primary-foreground/90">Name *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Your name"
+                    className="bg-card/20 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50"
+                  />
+                  {errors.name && (
+                    <p className="text-sm text-accent">{errors.name}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-primary-foreground/90">Phone *</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="+91 XXXXXXXXXX"
+                    className="bg-card/20 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50"
+                  />
+                  {errors.phone && (
+                    <p className="text-sm text-accent">{errors.phone}</p>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-primary-foreground/90">Email (Optional)</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="your@email.com"
+                  className="bg-card/20 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50"
+                />
+                {errors.email && (
+                  <p className="text-sm text-accent">{errors.email}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message" className="text-primary-foreground/90">Message *</Label>
+                <Textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="What would you like to know?"
+                  rows={4}
+                  className="bg-card/20 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50"
+                />
+                {errors.message && (
+                  <p className="text-sm text-accent">{errors.message}</p>
+                )}
+              </div>
+              <Button type="submit" variant="gold" className="w-full" disabled={loading}>
+                <Send className="w-4 h-4 mr-2" />
+                {loading ? "Sending..." : "Send Message"}
+              </Button>
+            </form>
+          </div>
         </div>
 
         {/* CTA Buttons */}
