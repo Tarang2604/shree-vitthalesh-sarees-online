@@ -27,7 +27,7 @@ const checkoutSchema = z.object({
 
 const Cart = () => {
   const { items, updateQuantity, removeFromCart, clearCart, totalAmount } = useCart();
-  const { user } = useAuth();
+  useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
