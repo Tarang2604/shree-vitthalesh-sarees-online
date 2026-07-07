@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { MapPin, Phone, Clock, Instagram, MessageCircle, Video, Truck, Ban, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { logError } from "@/lib/errorHandler";
 import { z } from "zod";
 
 const contactInfo = [
@@ -91,11 +92,13 @@ const Contact = () => {
       });
       setFormData({ name: "", phone: "", email: "", message: "" });
     } catch (error) {
+      logError("contact_submission", error);
       toast({
         title: "Failed to send",
         description: "Please try calling us directly at +91 8349985566",
         variant: "destructive",
       });
+
     } finally {
       setLoading(false);
     }
