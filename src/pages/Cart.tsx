@@ -7,9 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/contexts/CartContext";
-import { useAuth } from "@/contexts/AuthContext";
+
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { logError } from "@/lib/errorHandler";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { z } from "zod";
 
@@ -26,7 +27,7 @@ const checkoutSchema = z.object({
 
 const Cart = () => {
   const { items, updateQuantity, removeFromCart, clearCart, totalAmount } = useCart();
-  const { user } = useAuth();
+  
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -78,40 +79,29 @@ const Cart = () => {
     setLoading(true);
 
     try {
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          user_id: user?.id || null,
-          customer_name: formData.name,
-          customer_phone: formData.phone,
-          customer_email: formData.email || null,
-          shipping_address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          pincode: formData.pincode,
-          total_amount: totalAmount,
-          notes: formData.notes || null,
-        })
-        .select()
-        .single();
+      // Create the order atomically via a server-side function.
+      // Prices, product names and the order total are resolved from the
+      // products table inside the database — never trusted from the client —
+      // and the order + items are inserted in a single transaction.
+      const { data: orderId, error: orderError } = await supabase.rpc(
+        "create_order",
+        {
+          p_customer_name: formData.name,
+          p_customer_phone: formData.phone,
+          p_customer_email: formData.email || null,
+          p_shipping_address: formData.address,
+          p_city: formData.city,
+          p_state: formData.state,
+          p_pincode: formData.pincode,
+          p_notes: formData.notes || null,
+          p_items: items.map((item) => ({
+            product_id: item.id,
+            quantity: item.quantity,
+          })),
+        }
+      );
 
       if (orderError) throw orderError;
-
-      // Create order items
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
-        product_id: item.id,
-        product_name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
 
       clearCart();
       toast({
@@ -120,6 +110,7 @@ const Cart = () => {
       });
       navigate("/orders");
     } catch (error) {
+      logError("create_order", error);
       toast({
         title: "Order Failed",
         description: "Something went wrong. Please try again or contact us directly.",
@@ -129,6 +120,7 @@ const Cart = () => {
       setLoading(false);
     }
   };
+
 
   if (items.length === 0 && !showCheckout) {
     return (
